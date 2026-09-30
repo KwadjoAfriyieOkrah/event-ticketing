@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 
   // Runtime connection. On Supabase this should be the *pooled* endpoint
   // (port 6543, `?pgbouncer=true&connection_limit=1`) so that a serverless
