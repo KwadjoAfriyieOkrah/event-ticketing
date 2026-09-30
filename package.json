@@ -41,5 +41,8 @@
     "tsx": "^4.23.15",
     "typescript": "^5",
     "dotenv": "^16.6.1"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
