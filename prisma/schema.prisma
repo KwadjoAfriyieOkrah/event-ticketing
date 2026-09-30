@@ -4,18 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
-  // Runtime connection. On Supabase this should be the *pooled* endpoint
-  // (port 6543, `?pgbouncer=true&connection_limit=1`) so that a serverless
-  // function, which may get a fresh runtime per request, is not opening a new
-  // physical Postgres connection every time and exhausting the project's
-  // connection limit.
   url = env("DATABASE_URL")
-
-  // Migration/introspection connection. The Prisma CLI needs a session that
-  // survives DDL, so this stays on the *direct* endpoint (port 5432) — PgBouncer
-  // in transaction mode breaks the prepared statements and advisory locks that
-  // `migrate` and `db push` rely on.
   directUrl = env("DIRECT_URL")
 }
 
