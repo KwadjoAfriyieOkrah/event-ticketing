@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+
+  // Runtime connection. On Supabase this should be the *pooled* endpoint
+  // (port 6543, `?pgbouncer=true&connection_limit=1`) so that a serverless
+  // function, which may get a fresh runtime per request, is not opening a new
+  // physical Postgres connection every time and exhausting the project's
+  // connection limit.
+  url = env("DATABASE_URL")
+
+  // Migration/introspection connection. The Prisma CLI needs a session that
+  // survives DDL, so this stays on the *direct* endpoint (port 5432) — PgBouncer
+  // in transaction mode breaks the prepared statements and advisory locks that
+  // `migrate` and `db push` rely on.
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum EventMode {
+  ONLINE
+  OFFLINE
+  HYBRID
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum TicketStatus {
+  PENDING
+  ISSUED
+  USED
+  VOID
+  EXPIRED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  name         String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  events  Event[]
+  orders  Order[]
+  tickets Ticket[]
+
+  @@index([role])
+}
+
+model Event {
+  id             String    @id @default(cuid())
+  title          String
+  slug           String    @unique
+  description    String
+  overview       String
+  imageUrl       String
+  venue          String
+  location       String
+  eventDate      DateTime
+  mode           EventMode
+  audience       String
+  agenda         Json
+  organizer      String
+  organizerId    String?
+  organizerUser  User?     @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  tags           Json
+  priceInPesewas Int
+  capacity       Int?
+  ticketsSold    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  orders  Order[]
+  tickets Ticket[]
+
+  @@index([slug])
+  @@index([eventDate, mode])
+  @@index([organizerId])
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  userId            String?
+  user              User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  eventId           String
+  event             Event       @relation(fields: [eventId], references: [id])
+  fullName          String
+  email             String
+  quantity          Int         @default(1)
+  amountInPesewas   Int
+  paystackReference String      @unique
+  status            OrderStatus @default(PENDING)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  tickets Ticket[]
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([email])
+  @@index([status])
+}
+
+model Ticket {
+  id          String       @id @default(cuid())
+  orderId     String
+  order       Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  eventId     String
+  event       Event        @relation(fields: [eventId], references: [id])
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status      TicketStatus @default(PENDING)
+  qrCodeToken String       @unique
+  usedAt      DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([orderId])
+  @@index([eventId])
+  @@index([userId])
+  @@index([status])
+}
