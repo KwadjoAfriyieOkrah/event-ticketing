@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
-import { badRequest, requireAdmin, unauthorized } from "@/lib/require-admin";
+import { requireAdmin } from "@/lib/auth";
+import { badRequest, unauthorized } from "@/lib/auth-helpers";
 import { rateLimit } from "@/lib/rate-limit";
 import { generateUniqueSlug } from "@/lib/slug";
 import { eventWriteSchema } from "@/lib/validators/event.schema";
@@ -20,12 +21,9 @@ export async function POST(request: Request) {
   const session = await requireAdmin();
   if (!session) return unauthorized();
 
-  const limit = rateLimit(`event:create:${session.user.id}`, 10, 60_000);
+  const limit = await rateLimit(`event:create:${session.user.id}`, 10, 60_000);
   if (!limit.success) {
-    return NextResponse.json(
-      { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": String(Math.ceil((limit.reset - Date.now()) / 1000)) } },
-    );
+    return tooManyRequests(limit.reset);
   }
 
   let body: unknown;
@@ -70,6 +68,11 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   const session = await requireAdmin();
   if (!session) return unauthorized();
+
+  const limit = await rateLimit(`event:update:${session.user.id}`, 30, 60_000);
+  if (!limit.success) {
+    return tooManyRequests(limit.reset);
+  }
 
   let body: unknown;
   try {
@@ -138,6 +141,11 @@ export async function DELETE(request: Request) {
   const session = await requireAdmin();
   if (!session) return unauthorized();
 
+  const limit = await rateLimit(`event:delete:${session.user.id}`, 10, 60_000);
+  if (!limit.success) {
+    return tooManyRequests(limit.reset);
+  }
+
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
 
@@ -164,6 +172,13 @@ export async function DELETE(request: Request) {
   await prisma.event.delete({ where: { id } });
 
   return NextResponse.json({ deleted: true });
+}
+
+function tooManyRequests(reset: number) {
+  return NextResponse.json(
+    { error: "Too many requests" },
+    { status: 429, headers: { "Retry-After": String(Math.ceil((reset - Date.now()) / 1000)) } },
+  );
 }
 
 function zodIssues(error: { issues: { path: PropertyKey[]; message: string }[] }) {

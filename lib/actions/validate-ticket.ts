@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 import { redeemTicket } from "@/lib/orders";
 
@@ -42,27 +42,6 @@ export type ScanResult = {
  */
 const MAX_SCANS_PER_MINUTE = 60;
 
-/**
- * Why this file duplicates the admin check instead of importing requireAdmin()
- * from "@/lib/require-admin": Next only allows "use server" modules to export
- * async functions, so the shared guard (which also exports `unauthorized` and
- * `badRequest` Response factories) cannot be re-exported from here. This is
- * the same pattern already used in event.actions.ts.
- *
- * DECISION: the spec asked for requireRole("ADMIN"). This codebase has no such
- * helper; requireAdmin() is the established guard and is what protects the
- * rest of the admin surface, so this uses it rather than introducing a second
- * name for the same check.
- */
-async function requireAdmin() {
-  const session = await auth();
-
-  if (!session?.user?.id) return null;
-  if (session.user.role !== "ADMIN") return null;
-
-  return session;
-}
-
 function failure(outcome: ScanResult["outcome"], message: string, at: string | null = null): ScanResult {
   return { outcome, eventTitle: null, holderName: null, at, message };
 }
@@ -78,7 +57,11 @@ export async function validateTicket(raw: unknown): Promise<ScanResult> {
     return failure("UNAUTHORIZED", "Sign in to validate tickets");
   }
 
-  const limit = rateLimit(`scan:${session.user.id}`, MAX_SCANS_PER_MINUTE, 60_000);
+  const limit = await rateLimit(
+    `scan:${session.user.id}`,
+    MAX_SCANS_PER_MINUTE,
+    60_000,
+  );
   if (!limit.success) {
     return failure("RATE_LIMITED", "Too many scans. Pause for a moment.");
   }

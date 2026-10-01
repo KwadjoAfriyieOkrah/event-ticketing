@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { badRequest, requireAdmin, unauthorized } from "@/lib/require-admin";
+import { requireAdmin } from "@/lib/auth";
+import { badRequest, unauthorized } from "@/lib/auth-helpers";
 import { rateLimit } from "@/lib/rate-limit";
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
   const session = await requireAdmin();
   if (!session) return unauthorized();
 
-  const limit = rateLimit(`upload:${session.user.id}`, 20, 60_000);
+  const limit = await rateLimit(`upload:${session.user.id}`, 20, 60_000);
   if (!limit.success) {
     return NextResponse.json(
       { error: "Too many uploads" },

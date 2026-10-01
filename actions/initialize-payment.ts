@@ -77,7 +77,9 @@ export async function initializePayment(input: unknown): Promise<InitializePayme
   // ---- 1. rate limit -------------------------------------------------------
   // Keyed on the submitted address so a single buyer cannot be used to exhaust
   // the endpoint, and low enough that a scripted run of orders shows up in logs.
-  if (!rateLimit(`payment:init:${rateLimitSubject(input)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS).success) {
+  // NOTE: currently a no-op — see lib/rate-limit.ts. Add a per-IP key alongside
+  // this one when Redis lands, so rotating addresses cannot bypass it.
+  if (!(await rateLimit(`payment:init:${rateLimitSubject(input)}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)).success) {
     return {
       success: false,
       code: "RATE_LIMITED",

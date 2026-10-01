@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 
 const PROTECTED_PREFIXES = ["/admin"];
 
@@ -21,9 +21,9 @@ export async function proxy(request: Request & { nextUrl: URL }) {
     return NextResponse.next();
   }
 
-  const session = await auth();
+  const session = await requireAdmin();
 
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
+  if (!session) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

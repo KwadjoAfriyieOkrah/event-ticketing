@@ -3,18 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
 import { generateUniqueSlug } from "@/lib/slug";
 import { eventCreateSchema, eventWriteSchema } from "@/lib/validators/event.schema";
 
 export type ActionResult<T> = { success: true; data: T } | { success: false; error: string };
-
-async function requireAdmin() {
-  const session = await auth();
-  if (!session?.user?.id || session.user.role !== "ADMIN") return null;
-  return session;
-}
 
 function firstIssue(error: { issues: { message: string }[] }): string {
   return error.issues[0]?.message ?? "Invalid input";
@@ -24,7 +18,7 @@ export async function createEvent(input: unknown): Promise<ActionResult<{ id: st
   const session = await requireAdmin();
   if (!session) return { success: false, error: "Unauthorized" };
 
-  if (!rateLimit(`event:create:${session.user.id}`, 10, 60_000).success) {
+  if (!(await rateLimit(`event:create:${session.user.id}`, 10, 60_000)).success) {
     return { success: false, error: "Too many requests. Please try again shortly." };
   }
 

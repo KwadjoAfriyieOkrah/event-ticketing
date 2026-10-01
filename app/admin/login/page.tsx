@@ -28,6 +28,11 @@ export default function LoginPage() {
         redirect: false,
       });
 
+      if (result?.code === "rate_limited") {
+        setError("Too many attempts. Please try again in a few minutes.");
+        return;
+      }
+
       if (result?.ok && !result?.error) {
         router.push("/admin/events");
         router.refresh();
