@@ -672,7 +672,7 @@ async function main(): Promise<void> {
     }
 
     return { removed, admin, organizer, buyerCount: buyers.length, summary, orderCount, ticketCount };
-  });
+  }, { timeout: 30000 });
 
   console.log(
     `  ${green("✔")} Cleared ${seeded.removed.tickets} tickets, ${seeded.removed.orders} orders, ` +
