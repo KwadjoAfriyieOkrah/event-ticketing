@@ -81,7 +81,7 @@ export default async function Page() {
       <div className="mt-6">
         <a
           href="/admin/events/new"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 items-center justify-center rounded-md px-5 text-sm font-medium transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex h-10 items-center justify-center rounded-md px-5 text-sm font-medium transition-colors"
         >
           New Event
         </a>

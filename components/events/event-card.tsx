@@ -19,8 +19,10 @@ export function EventCard({ event }: { event: PublicEvent }) {
   return (
     // Hover lifts the border rather than the shadow: a drop shadow is black on
     // black here, so it is invisible at rest and does nothing on hover. The
-    // violet edge is the affordance that actually reads on a near-black canvas.
-    <article className="bg-card group relative flex h-full w-full flex-col overflow-hidden rounded-xl border transition-colors hover:border-primary/40 focus-within:ring-ring/50 focus-within:ring-[3px]">
+    // wine edge is the affordance that actually reads on a near-black canvas,
+    // so it uses the accent step at full strength — a tinted fill would drop the
+    // edge to 1.3:1 against the card.
+    <article className="bg-card group relative flex h-full w-full flex-col overflow-hidden rounded-xl border transition-colors hover:border-brand-accent focus-within:ring-ring focus-within:ring-[3px]">
       <div className="bg-muted relative aspect-16/10 overflow-hidden">
         <Image
           src={event.imageUrl}
@@ -35,13 +37,17 @@ export function EventCard({ event }: { event: PublicEvent }) {
             <span className="text-xs font-medium text-pretty uppercase">{month}</span>
             <span className="text-lg font-semibold tabular-nums">{day}</span>
           </div>
-          <Badge variant="secondary" className="bg-background/95">
+          <Badge variant="outline" className="border-brand-accent/40 bg-background/95 text-brand">
             {MODE_LABEL[event.mode]}
           </Badge>
         </div>
 
         {availability.soldOut && (
-          <div className="absolute inset-0 grid place-items-center bg-background/70">
+          // The scrim is the darkest wine rather than a neutral wash: it puts the card
+          // into the palette and, unlike a tint of the accent, it survives being
+          // laid over an unpredictable photo. The label keeps its own opaque
+          // background so its contrast does not depend on the image.
+          <div className="absolute inset-0 grid place-items-center bg-brand-dark/70">
             <span className="rounded-full border bg-background px-3 py-1 text-xs font-semibold">
               Sold out
             </span>

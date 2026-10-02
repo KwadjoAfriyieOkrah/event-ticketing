@@ -177,7 +177,7 @@ export function TicketScanner({ operatorName }: { operatorName: string }) {
               autoCorrect="off"
               autoCapitalize="none"
               spellCheck={false}
-              className="h-11 min-w-0 flex-1 touch-manipulation rounded-md border border-input bg-background px-3 text-base outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="h-11 min-w-0 flex-1 touch-manipulation rounded-md border border-input bg-background px-3 text-base outline-none placeholder:text-muted-foreground focus-visible:ring-[3px] focus-visible:ring-ring"
             />
             <Button type="submit" size="lg" disabled={busy || manualToken.trim().length === 0}>
               Validate

@@ -28,7 +28,19 @@ function Progress({
     >
       <div
         data-slot="progress-indicator"
-        className={cn("bg-primary h-full w-full flex-1", indicatorClassName)}
+        // Wine ramp rather than a flat fill: the gradient starts on the accent
+        // step, which is the one wine that clears 3:1 against this track, so the
+        // leading edge — the part that shows how much is left — is the readable
+        // end.
+        //
+        // A caller overrides the *stops*, never the whole gradient. `bg-*` on
+        // the caller's side would be a background-colour while this is a
+        // background-image, so tailwind-merge keeps both and the wine gradient
+        // silently paints over whatever state colour was passed.
+        className={cn(
+          "bg-linear-to-r from-brand-accent to-primary h-full w-full flex-1",
+          indicatorClassName,
+        )}
         style={{ transform: `translateX(-${100 - percent}%)` }}
       />
     </div>

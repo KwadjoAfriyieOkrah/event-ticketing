@@ -7,7 +7,7 @@ import { useState } from "react";
 // Sunk below the card rather than raised above it: `bg-background` is darker
 // than `bg-card`, so the field reads as a well cut into the panel.
 const inputClass =
-  "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-xs transition-shadow focus-visible:ring-[3px] focus-visible:outline-none";
+  "border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-xs transition-shadow focus-visible:ring-[3px] focus-visible:outline-none";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -100,7 +100,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 flex w-full cursor-pointer justify-center rounded-md px-4 py-2.5 text-sm font-medium transition-colors focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-ring flex w-full cursor-pointer justify-center rounded-md px-4 py-2.5 text-sm font-medium transition-colors focus-visible:ring-[3px] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             disabled={loading}
           >
             {loading ? "Signing in..." : "Sign In"}

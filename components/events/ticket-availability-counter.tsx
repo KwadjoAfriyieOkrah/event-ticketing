@@ -51,12 +51,18 @@ export function TicketAvailabilityCounter({
         <>
           <Progress
             value={availability.percentSold}
+            // Gradient stops, not `bg-*`: the indicator already paints a wine
+            // gradient, and a background-colour passed here would sit *under*
+            // it instead of replacing it. The wine ramp is the at-rest look; the
+            // destructive ramp is reserved for the states that need a warning,
+            // which also keeps it legible against a palette that is now itself
+            // red.
             indicatorClassName={
               availability.soldOut
-                ? "bg-destructive"
+                ? "from-destructive to-destructive/70"
                 : availability.isLowStock
-                  ? "bg-destructive"
-                  : "bg-success"
+                  ? "from-destructive to-destructive/70"
+                  : "from-brand-accent to-primary"
             }
           />
 

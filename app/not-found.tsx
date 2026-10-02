@@ -14,7 +14,7 @@ export default function NotFound() {
           </p>
           <Link
             href="/#events"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 mt-6 inline-flex h-10 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover mt-6 inline-flex h-10 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors"
           >
             Browse upcoming events
           </Link>

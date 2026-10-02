@@ -24,7 +24,7 @@ export function Hero() {
       {/* A single soft gradient wash. Kept as one element rather than a stack of
           blurred blobs so the hero costs one paint instead of four. The colour
           comes from `--hero-glow` so the wash follows the palette instead of
-          hard-coding a violet that would not survive a rebrand. */}
+          hard-coding a wine that would not survive a rebrand. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_55%_at_50%_0%,var(--hero-glow)_0%,transparent_100%)]"
@@ -32,7 +32,7 @@ export function Hero() {
 
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="border-primary/30 bg-primary/10 text-brand inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
+          <p className="border-brand-accent/40 bg-primary/10 text-brand inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium">
             <span className="bg-success size-1.5 rounded-full" aria-hidden />
             Tickets are live for this season
           </p>
@@ -41,9 +41,11 @@ export function Hero() {
             Find your next event.
             {/* Gradient-clipped rather than a flat colour so the accent reads as
                 the one radiant element on the page without introducing a second
-                hue. Both stops are AA-legible against the canvas, so the line
-                survives being read rather than only being looked at. */}
-            <span className="from-primary to-brand block bg-linear-to-r bg-clip-text text-balance text-transparent">
+                hue. Both stops clear the 3:1 that large text needs — the ramp
+                starts one step up from the fill, because the fill wine is too
+                dark to open a gradient legibly — so the line survives being read
+                rather than only being looked at. */}
+            <span className="from-primary-hover to-brand block bg-linear-to-r bg-clip-text text-balance text-transparent">
               Be in the room for it.
             </span>
           </h1>
@@ -56,7 +58,7 @@ export function Hero() {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
               href="#events"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring/50 focus-visible:ring-[3px] inline-flex h-11 w-full items-center justify-center gap-2 rounded-md px-6 text-sm font-medium shadow-xs transition-colors sm:w-auto"
+              className="bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-ring focus-visible:ring-[3px] inline-flex h-11 w-full items-center justify-center gap-2 rounded-md px-6 text-sm font-medium shadow-xs transition-colors sm:w-auto"
             >
               Browse upcoming events
             </a>
@@ -73,7 +75,7 @@ export function Hero() {
           {PROMISES.map(({ icon: Icon, title, body }) => (
             <li
               key={title}
-              className="bg-card border-border hover:border-primary/40 flex flex-col gap-2 rounded-xl border p-5 transition-colors"
+              className="bg-card border-border hover:border-brand-accent flex flex-col gap-2 rounded-xl border p-5 transition-colors"
             >
               <span className="bg-primary/10 text-brand grid size-9 place-items-center rounded-md">
                 <Icon className="size-4" aria-hidden />

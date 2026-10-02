@@ -7,7 +7,7 @@
  *
  * DECISION: the base palette is dark. The storefront, the admin console and
  * checkout are all indoor, screen-facing surfaces, and a near-black canvas with
- * zinc-900 cards under a single violet accent reads as a product rather than as
+ * zinc-900 cards under a single wine accent reads as a product rather than as
  * an unstyled stylesheet.
  *
  * The one exception is the gate scanner. It is a phone held outdoors at a
@@ -41,20 +41,46 @@
   --popover: #18181b;
   --popover-foreground: #fafafa;
 
-  /* Violet is the only interactive colour in the product. */
-  --primary: #7c3aed;
+  /* Wine is the only interactive colour in the product. Four steps, and each
+     one has a job: the fill, the hover fill, the highlight, the dark surface. */
+  --primary: #8b3a3a;
   --primary-foreground: #ffffff;
 
-  /* Accent violet for text, icons and glows. `--primary` is a *fill* colour: it
-     lands at 3.4:1 on this canvas, which cannot carry small text, so anything
-     written or tinted in the brand hue uses this lighter step at 7.1:1. */
-  --brand: #a78bfa;
+  /* Hover step. A real token rather than the usual `hover:bg-primary/90`, because
+     an alpha mix of a fill lands on a different hue than a hand-picked wine and
+     drops the medium step the palette is built around. White on it is 5.9:1, so
+     the label survives the hover. */
+  --primary-hover: #9d4a54;
+
+  /* Text/icon step for the dark canvas. `--primary` is a *fill* colour: it lands
+     at 2.5:1 here, which cannot carry small text, so anything written or tinted
+     in the brand hue uses this lighter step at 5.2:1. It is the accent wine
+     lifted two steps — the accent itself is 4.3:1, which is fine for a border
+     but not for a label. */
+  --brand: #c86a6a;
+
+  /* Highlights, borders and focus rings. The step that reads as a *boundary* on
+     this canvas — 4.3:1 on the background, 4.0:1 on a card — which is what lets
+     focus rings and hover edges be used at full strength instead of being
+     diluted by an alpha modifier until they vanish (see the ring decision in
+     `@layer base`). */
+  --brand-accent: #b85c5c;
+
+  /* Darkest wine. A *surface* step: scrims, deep gradient stops, and text on a
+     light canvas. Never text on the dark one, where it sits at 2.0:1; light text
+     on it clears 9.2:1. */
+  --brand-dark: #722f37;
 
   /* The landing hero's ambient wash. A token rather than a `color-mix()` written
      inline into an arbitrary utility, so the hero can keep painting itself as
      one element instead of a stack of blurred blobs, and so the light scope can
-     dial it back to something that reads on white. */
-  --hero-glow: color-mix(in oklab, #7c3aed 24%, transparent);
+     dial it back to something that reads on white.
+
+     Mixed from the accent step, not the fill: the fill wine at this strength is
+     a near-black wash on a near-black canvas (1.2:1) and the hero reads flat,
+     whereas the accent at 30% (1.4:1) keeps the same ambient glow the previous
+     violet step produced. */
+  --hero-glow: color-mix(in oklab, #b85c5c 30%, transparent);
 
   /* Recessed fills. `muted` sits below card (image wells, empty states);
      `secondary` and `accent` sit above it (hover and pressed fills). */
@@ -74,7 +100,12 @@
 
   --border: #27272a;
   --input: #27272a;
-  --ring: #7c3aed;
+
+  /* Focus ring. Set to the accent step and used at full strength: the accent is
+     the only wine that clears the 3:1 non-text floor against both the canvas and
+     a card, so an alpha modifier (`ring-ring/50`) would put the keyboard focus
+     indicator below the threshold it exists to meet. */
+  --ring: #b85c5c;
 
   --success: #10b981;
   --success-foreground: #042f2e;
@@ -99,16 +130,28 @@
   --popover: #ffffff;
   --popover-foreground: #18181b;
 
-  --primary: #7c3aed;
+  --primary: #8b3a3a;
   --primary-foreground: #ffffff;
 
-  /* The same hue carried down to where it still passes on white: the dark-mode
-     `--brand` is only 2.7:1 against a light canvas. */
-  --brand: #6d28d9;
+  /* Same medium wine as the dark scope: on a light canvas a *lighter* hover is
+     the direction that reads as "pressed", and it holds white text at 5.9:1. */
+  --primary-hover: #9d4a54;
 
-  /* Much weaker than the dark value — a 24% violet wash on white is a
-     discoloured page, not an ambient glow. */
-  --hero-glow: color-mix(in oklab, #7c3aed 10%, transparent);
+  /* The same hue carried to the opposite end of the ramp for this scope. The
+     dark-mode `--brand` is 2.7:1 against a light canvas, so the light steps
+     downward instead: the darkest wine is 9.7:1 on white and can carry labels. */
+  --brand: #722f37;
+
+  /* Borders and highlights step down one notch too, for the same reason. */
+  --brand-accent: #9d4a54;
+
+  /* The surface step here is the fill wine: `--brand-dark` would be the darkest
+     wine in the product and reads as near-black text rather than as a surface. */
+  --brand-dark: #8b3a3a;
+
+  /* Much weaker than the dark value — a 30% wine wash on white is a discoloured
+     page, not an ambient glow. */
+  --hero-glow: color-mix(in oklab, #9d4a54 12%, transparent);
 
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
@@ -125,7 +168,7 @@
 
   --border: #e4e4e7;
   --input: #e4e4e7;
-  --ring: #7c3aed;
+  --ring: #8b3a3a;
 
   --success: #059669;
   --success-foreground: #ffffff;
@@ -148,7 +191,10 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-brand: var(--brand);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-dark: var(--brand-dark);
   --color-hero-glow: var(--hero-glow);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -169,14 +215,14 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
 
   body {
     @apply bg-background text-foreground font-sans;
   }
 
-  /* Violet-tinted so selected text still reads as a selection rather than as a
+  /* Wine-tinted so selected text still reads as a selection rather than as a
      highlight marker competing with the accent. */
   ::selection {
     background-color: color-mix(in oklab, var(--primary) 35%, transparent);
